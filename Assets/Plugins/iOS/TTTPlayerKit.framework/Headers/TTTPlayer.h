@@ -63,6 +63,7 @@ typedef NS_ENUM(NSInteger, TTTPlayerStatus) {
  TTTPlayer 的代理协议
  */
 @protocol TTTPlayerDelegate <NSObject>
+@optional;
 
 /**
  告知代理对象播放器状态变更
@@ -87,6 +88,43 @@ typedef NS_ENUM(NSInteger, TTTPlayerStatus) {
  @param statsInfo 统计信息
  */
 - (void)player:(nonnull TTTPlayer *)player statsInfo:(nonnull TTTPlayerStatsInfo *)statsInfo;
+
+/**
+ 告知代理对象播放器H264SEI
+ 
+ @param player  调用该方法的 TTTPlayer 对象
+ @param sei     H264SEI
+ */
+- (void)player:(nonnull TTTPlayer *)player playbackH264SEI:(nonnull NSString *)sei;
+
+/**
+ 告知代理对象播放器H264SEI中的音量信息
+ 
+ @param player  调用该方法的 TTTPlayer 对象
+ @param volInfo 音量信息
+ */
+- (void)player:(nonnull TTTPlayer *)player playbackVolInfo:(nonnull NSArray<NSDictionary *> *)volInfo;
+
+- (void)playerRenderOverlay:(nonnull TTTPlayer *)player;
+
+#pragma mark - KTV
+/**
+ 回调KTV视频数据信息
+ 
+ @param player  调用该方法的 TTTPlayer 对象
+ @param data   420P数据
+ @param width  视频宽
+ @param height 视频高
+ */
+- (void)player:(nonnull TTTPlayer *)player videoData:(NSData *_Nullable)data width:(int)width height:(int)height;
+
+/**
+ 回调KTV音频数据信息
+ 
+ @param player  调用该方法的 TTTPlayer 对象
+ @param data    音频数据
+ */
+- (void)player:(nonnull TTTPlayer *)player audioData:(NSData *_Nullable)data;
 
 @end
 
@@ -176,4 +214,33 @@ typedef NS_ENUM(NSInteger, TTTPlayerStatus) {
  */
 - (void)seekTo:(NSTimeInterval)time;
 
+/**
+ 调节播放音量
+ @param volume  0-100
+ */
+-  (void)setPlaybackVolume:(int)volume;
+
+- (UIImage *)thumbnailImageAtCurrentTime;
+
+#pragma mark - KTV
+/**
+ KTV场景再play之前调用该接口
+ */
+- (void)prepareForKTV;
+
+/**
+ 调节KTV播放音量
+ @param volume  0-100
+ */
+-  (void)adjustKTVVolume:(int)volume;
+
+/**
+ * 拉取KTV音频数据
+ *
+ * @param data        数据地址
+ * @param size        数据长度
+ * @param sampleRate  采样率
+ * @param channels    声道数
+ */
+- (void)pullKTVAudioData:(char *)data size:(int)size sampleRate:(int)sampleRate channels:(int)channels;
 @end
